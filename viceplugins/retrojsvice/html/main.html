@@ -216,6 +216,14 @@ function sendImgReq(imgLoadIdx) {
     }
     imgElems[imgLoadIdx & 1].src = imgPath;
 
+    if (window.innerHeight != document.layers[imgLoadIdx & 1].height) {
+        document.layers[imgLoadIdx & 1].height = window.innerHeight;
+    }
+
+    if (window.innerWidth != document.layers[imgLoadIdx & 1].width) {
+        document.layers[imgLoadIdx & 1].width = window.innerWidth;
+    }
+
     scheduleImgReload(imgLoadIdx, imgLoadRetryInterval);
 }
 
@@ -302,10 +310,7 @@ function imgLoadHandler(imgElemIdx) {
 
     updateCursor(currentImgLoadIdx & 1);
 
-    // imgElems[currentImgLoadIdx & 1].style.zIndex = 3;
-    // imgElems[(currentImgLoadIdx & 1) ^ 1].style.zIndex = 2;
-
-    document.animation.src = imgElems[imgElemIdx].src;
+    imgElems[currentImgLoadIdx & 1].moveAbove(imgElems[(currentImgLoadIdx & 1) ^ 1])
 
     postImgLoadHandlerSchedIdx = currentImgLoadIdx;
     setTimeout("postImgLoadHandler(" + currentImgLoadIdx + ")", 0);
@@ -353,15 +358,15 @@ function updateMousePos(event) {
     // This is supper hacky to acount for image proportion.
     // We can eliminate this by using the image size instead of innerHeight and innerWidth;
 
-    var verticalRes = window.innerHeight;
-    var imageVertRes = document.animation.height;
-    var verticalMultiply = imageVertRes * mouseY;
-    mouseY = Math.round(verticalMultiply / verticalRes, 1);
+    // var verticalRes = window.innerHeight;
+    // var imageVertRes = document.animation.height;
+    // var verticalMultiply = imageVertRes * mouseY;
+    // mouseY = Math.round(verticalMultiply / verticalRes, 1);
 
-    var horizontalRes = window.innerWidth;
-    var imageHorizontalRes = document.animation.width;
-    var horizontalMultiply = horizontalRes * mouseX;
-    mouseX = Math.round(horizontalMultiply / imageHorizontalRes, 1);
+    // var horizontalRes = window.innerWidth;
+    // var imageHorizontalRes = document.animation.width;
+    // var horizontalMultiply = horizontalRes * mouseX;
+    // mouseX = Math.round(horizontalMultiply / imageHorizontalRes, 1);
 
     // alert("res = " + verticalRes + "; targetRes = " + imageVertRes + "; mouseY = " + mouseY + "; newMouseY = " + result);
 
@@ -369,10 +374,10 @@ function updateMousePos(event) {
     // var mouseX = Math.max((document.animation.width * mouseX) / (window.innerWidth));
     // var mouseY = Math.max((document.animation.height * mouseY) / (window.innerHeight));
 
-    // if(fixMousePosition) {
-    //     mouseX -= 2;
-    //     mouseY -= 2;
-    // }
+    if(fixMousePosition) {
+        mouseX -= 2;
+        mouseY -= 2;
+    }
 }
 
 function preventDefault(event) {
@@ -410,7 +415,7 @@ function sanitizeModifiers(event, func) {
 
 function registerEventHandlers() {
 
-    window.captureEvents(Event.MOUSEDOWN | Event.MOUSEUP | Event.DBLCLICK | Event.MOUSEMOVE | Event.KEYUP | Event.KEYDOWN | Event.KEYPRESS);
+    window.captureEvents(Event.MOUSEDOWN | Event.MOUSEUP | Event.DBLCLICK | Event.MOUSEMOVE | Event.KEYUP | Event.KEYDOWN | Event.KEYPRESS | Event.RESIZE);
 
     imgElems[0].onload = function() { imgLoadHandler(0); };
     imgElems[1].onload = function() { imgLoadHandler(1); };
@@ -597,8 +602,8 @@ function registerEventHandlers() {
 window.onload = function() {
     detectBrowserQuirks();
 
-    imgElems[0] = new Image();
-    imgElems[1] = new Image();
+    imgElems[0] = document.layers[0];
+    imgElems[1] = document.layers[1];
 
     registerEventHandlers();
 
@@ -608,7 +613,8 @@ window.onload = function() {
 </script>
 </head>
 <body marginleft="0" margintop="0"  marginbottom="0" marginright="0" marginwidth="0" leftmargin="0" rightmargin="0" marginheight="0" hspace="0" vspace="0" style="margin-left:0; margin-right:0; margin-top: 0">
-<IMG NAME="animation" height="100%" width="100%" vspace="0" hspace="0">
+    <layer height="100%" width="100%" vspace="0" hspace="0" top="0" left="0" z-index=2></layer>
+    <layer height="100%" width="100%" vspace="0" hspace="0" top="0" left="0" z-index=3></layer>
 <form></form>
 <form></form>
 <form></form>
