@@ -185,8 +185,8 @@ function sendImgReq(imgLoadIdx) {
         mouseMoved = false;
     }
 
-    var width = document.body.clientWidth | 0;
-    var height = document.body.clientHeight | 0;
+    var width = 0; // document.body.clientWidth | 0;
+    var height = 0; // document.body.clientHeight | 0;
     if(width == 0 || height == 0) {
         width = window.innerWidth | 0;
         height = window.innerHeight | 0;
@@ -300,8 +300,10 @@ function imgLoadHandler(imgElemIdx) {
 
     updateCursor(currentImgLoadIdx & 1);
 
-    imgElems[currentImgLoadIdx & 1].style.zIndex = 3;
-    imgElems[(currentImgLoadIdx & 1) ^ 1].style.zIndex = 2;
+    // imgElems[currentImgLoadIdx & 1].style.zIndex = 3;
+    // imgElems[(currentImgLoadIdx & 1) ^ 1].style.zIndex = 2;
+
+    document.animation.src = imgElems[imgElemIdx].src;
 
     postImgLoadHandlerSchedIdx = currentImgLoadIdx;
     setTimeout("postImgLoadHandler(" + currentImgLoadIdx + ")", 0);
@@ -342,8 +344,8 @@ function putEvent(event) {
 }
 
 function updateMousePos(event) {
-    mouseX = event.clientX | 0;
-    mouseY = event.clientY | 0;
+    mouseX = event.pageX | event.clientX | 0;
+    mouseY = event.pageY | event.clientY | 0;
     if(fixMousePosition) {
         mouseX -= 2;
         mouseY -= 2;
@@ -384,12 +386,15 @@ function sanitizeModifiers(event, func) {
 }
 
 function registerEventHandlers() {
+
+    window.captureEvents(Event.MOUSEDOWN | Event.MOUSEUP | Event.DBLCLICK | Event.MOUSEMOVE | Event.KEYUP | Event.KEYDOWN | Event.KEYPRESS);
+
     imgElems[0].onload = function() { imgLoadHandler(0); };
     imgElems[1].onload = function() { imgLoadHandler(1); };
 
     window.onresize = newEventNotify;
 
-    document.onmousedown = function(event) {
+    window.onmousedown = function(event) {
         if(!event) event = window.event;
         updateMousePos(event);
         var button = event.button | 0;
@@ -405,7 +410,7 @@ function registerEventHandlers() {
         preventDefault(event);
     };
 
-    document.onmouseup = function(event) {
+    window.onmouseup = function(event) {
         if(!event) event = window.event;
         updateMousePos(event);
         var button = event.button | 0;
@@ -418,14 +423,14 @@ function registerEventHandlers() {
         preventDefault(event);
     };
 
-    document.ondblclick = function(event) {
+    window.ondblclick = function(event) {
         if(!event) event = window.event;
         updateMousePos(event);
         putEvent("MDBL_" + mouseX + "_" + mouseY);
         preventDefault(event);
     };
 
-    document.onmousemove = function(event) {
+    window.onmousemove = function(event) {
         if(!event) event = window.event;
         updateMousePos(event);
         if(!mouseMoved) {
@@ -458,9 +463,9 @@ function registerEventHandlers() {
         };
     }
 
-    document.body.onmouseleave = function() {
-        putEvent("MOUT_" + mouseX + "_" + mouseY);
-    };
+    // document.body.onmouseleave = function() {
+    //     putEvent("MOUT_" + mouseX + "_" + mouseY);
+    // };
 
     if(useBackspaceCaptureHack) {
         hackForm = document.forms[document.forms.length - 1];
@@ -490,7 +495,7 @@ function registerEventHandlers() {
         preventDefault(event);
     };
 
-    document.onkeypress = function(event) {
+    window.onkeypress = function(event) {
         if(!event) {
             event = window.event;
             var key = event.keyCode | 0;
@@ -508,7 +513,7 @@ function registerEventHandlers() {
         preventDefault(event);
     };
 
-    document.onkeydown = function(event) {
+    window.onkeydown = function(event) {
         if(!event) {
             event = window.event;
             var key = event.keyCode | 0;
@@ -531,7 +536,7 @@ function registerEventHandlers() {
         }
     };
 
-    document.onkeyup = function(event) {
+    window.onkeyup = function(event) {
         if(!event) {
             event = window.event;
             var key = event.keyCode | 0;
@@ -569,8 +574,8 @@ function registerEventHandlers() {
 window.onload = function() {
     detectBrowserQuirks();
 
-    imgElems[0] = document.images[0];
-    imgElems[1] = document.images[1];
+    imgElems[0] = new Image();
+    imgElems[1] = new Image();
 
     registerEventHandlers();
 
@@ -579,9 +584,8 @@ window.onload = function() {
 
 </script>
 </head>
-<body>
-<img>
-<img>
+<body marginwidth="0" leftmargin="0" rightmargin="0" marginheight="0" hspace="0" vspace="0" style="margin-left:0; margin-right:0; margin-top: 0">
+<IMG NAME="animation" height="100%" width="100%" vspace="0" hspace="0">
 <form></form>
 <form></form>
 <form></form>

@@ -76,7 +76,8 @@ function<void(shared_ptr<HTTPRequest>)> compressPNG_(
                 for(const vector<uint8_t>& chunk : *png) {
                     out.write((const char*)chunk.data(), chunk.size());
                 }
-            }
+            },
+            false
         );
     };
 }
@@ -107,7 +108,8 @@ function<void(shared_ptr<HTTPRequest>)> compressJPEG_(
             jpeg->length,
             [jpeg](ostream& out) {
                 out.write((const char*)jpeg->data.get(), jpeg->length);
-            }
+            },
+            false
         );
     };
 }
