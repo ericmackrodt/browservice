@@ -5,6 +5,8 @@
 <style>
 body {
     overflow: hidden;
+    padding: 0;
+    margin: 0;
 }
 img {
     position: absolute;
@@ -185,7 +187,7 @@ function sendImgReq(imgLoadIdx) {
         mouseMoved = false;
     }
 
-    var width = 0; // document.body.clientWidth | 0;
+    var width =  0; // document.body.clientWidth | 0;
     var height = 0; // document.body.clientHeight | 0;
     if(width == 0 || height == 0) {
         width = window.innerWidth | 0;
@@ -346,10 +348,31 @@ function putEvent(event) {
 function updateMousePos(event) {
     mouseX = event.pageX | event.clientX | 0;
     mouseY = event.pageY | event.clientY | 0;
-    if(fixMousePosition) {
-        mouseX -= 2;
-        mouseY -= 2;
-    }
+
+    // NETSCAPE FIX
+    // This is supper hacky to acount for image proportion.
+    // We can eliminate this by using the image size instead of innerHeight and innerWidth;
+
+    var verticalRes = window.innerHeight;
+    var imageVertRes = document.animation.height;
+    var verticalMultiply = imageVertRes * mouseY;
+    mouseY = Math.round(verticalMultiply / verticalRes, 1);
+
+    var horizontalRes = window.innerWidth;
+    var imageHorizontalRes = document.animation.width;
+    var horizontalMultiply = horizontalRes * mouseX;
+    mouseX = Math.round(horizontalMultiply / imageHorizontalRes, 1);
+
+    // alert("res = " + verticalRes + "; targetRes = " + imageVertRes + "; mouseY = " + mouseY + "; newMouseY = " + result);
+
+
+    // var mouseX = Math.max((document.animation.width * mouseX) / (window.innerWidth));
+    // var mouseY = Math.max((document.animation.height * mouseY) / (window.innerHeight));
+
+    // if(fixMousePosition) {
+    //     mouseX -= 2;
+    //     mouseY -= 2;
+    // }
 }
 
 function preventDefault(event) {
@@ -584,7 +607,7 @@ window.onload = function() {
 
 </script>
 </head>
-<body marginwidth="0" leftmargin="0" rightmargin="0" marginheight="0" hspace="0" vspace="0" style="margin-left:0; margin-right:0; margin-top: 0">
+<body marginleft="0" margintop="0"  marginbottom="0" marginright="0" marginwidth="0" leftmargin="0" rightmargin="0" marginheight="0" hspace="0" vspace="0" style="margin-left:0; margin-right:0; margin-top: 0">
 <IMG NAME="animation" height="100%" width="100%" vspace="0" hspace="0">
 <form></form>
 <form></form>
