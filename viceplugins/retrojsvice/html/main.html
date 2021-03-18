@@ -410,7 +410,7 @@ function sanitizeModifiers(event, func) {
 
 function registerEventHandlers() {
 
-    window.captureEvents(Event.MOUSEDOWN | Event.MOUSEUP | Event.DBLCLICK | Event.MOUSEMOVE | Event.KEYUP | Event.KEYDOWN | Event.KEYPRESS);
+    window.captureEvents(Event.MOUSEDOWN | Event.MOUSEUP | Event.DBLCLICK | Event.MOUSEMOVE | Event.KEYUP | Event.KEYDOWN | Event.KEYPRESS | Event.BLUR);
 
     imgElems[0].onload = function() { imgLoadHandler(0); };
     imgElems[1].onload = function() { imgLoadHandler(1); };
@@ -504,9 +504,9 @@ function registerEventHandlers() {
         };
     } else {
         document.forms[document.forms.length - 1].innerHTML = "";
-        window.onblur = function() {
-            putEvent("FOUT");
-        };
+        // window.onblur = function() {
+        //     putEvent("FOUT");
+        // };
     }
 
     document.ondragstart = function() {
